@@ -287,8 +287,8 @@ export async function handleAiRequest(
           },
           body: JSON.stringify({
             model: modelId,
-            max_tokens: 1200,
-            temperature: 0.25,
+            max_tokens: 1500,
+            thinking: { type: 'disabled' },
             system,
             messages: [{ role: 'user', content: user }],
           }),
@@ -300,7 +300,8 @@ export async function handleAiRequest(
         const res = await callAnthropic(model);
         if (res.ok) {
           const data = (await res.json()) as any;
-          const text = data?.content?.[0]?.text || '{}';
+          const textBlock = data?.content?.find((c: any) => c.type === 'text') || data?.content?.[0];
+          const text = textBlock?.text || '{}';
           const parsed = extractJsonObject(text);
           return {
             status: 200,
@@ -333,7 +334,8 @@ export async function handleAiRequest(
             const retryRes = await callAnthropic(firstModelId);
             if (retryRes.ok) {
               const data = (await retryRes.json()) as any;
-              const text = data?.content?.[0]?.text || '{}';
+              const textBlock = data?.content?.find((c: any) => c.type === 'text') || data?.content?.[0];
+              const text = textBlock?.text || '{}';
               return {
                 status: 200,
                 body: {

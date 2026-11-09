@@ -102,7 +102,13 @@ export const TriageSequence: React.FC<TriageSequenceProps> = ({ merchant }) => {
           },
         }),
       });
-      const json = await res.json();
+      const text = await res.text();
+      let json: any = {};
+      try {
+        json = JSON.parse(text);
+      } catch {
+        throw new Error(text.length < 150 ? text : `Server error (${res.status})`);
+      }
       if (!res.ok) {
         throw new Error(json.error || 'Failed to generate AI solutions');
       }
