@@ -368,9 +368,7 @@ export const OutreachComposer: React.FC<OutreachComposerProps> = ({ merchant }) 
                   if (inlineKey.trim()) {
                     localStorage.setItem('retainops_anthropic_key', inlineKey.trim());
                     setAiError(null);
-                    if (activePreset) {
-                      handleRewrite(activePreset, false);
-                    }
+                    triggerAiRewrite(activePreset || 'veteran_retention', true);
                   }
                 }}
                 className="px-2.5 py-1 bg-rzp-blue text-white font-medium rounded hover:bg-rzp-blue-dark text-xs whitespace-nowrap"

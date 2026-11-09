@@ -228,22 +228,22 @@ export async function handleAiRequest(
   }
 
   const anthropicKey = (
-    reqHeaders?.['x-anthropic-key'] ||
-    reqHeaders?.['anthropic-api-key'] ||
+    headers?.['x-anthropic-key'] ||
+    headers?.['anthropic-api-key'] ||
     reqBody?.apiKey ||
     env?.ANTHROPIC_API_KEY ||
     (typeof process !== 'undefined' ? process.env?.ANTHROPIC_API_KEY : undefined)
   )?.trim();
 
   const geminiKey = (
-    reqHeaders?.['x-gemini-key'] ||
+    headers?.['x-gemini-key'] ||
     reqBody?.geminiKey ||
     env?.GEMINI_API_KEY ||
     (typeof process !== 'undefined' ? process.env?.GEMINI_API_KEY : undefined)
   )?.trim();
 
   const openaiKey = (
-    reqHeaders?.['x-openai-key'] ||
+    headers?.['x-openai-key'] ||
     env?.OPENAI_API_KEY ||
     (typeof process !== 'undefined' ? process.env?.OPENAI_API_KEY : undefined)
   )?.trim();
@@ -266,12 +266,14 @@ export async function handleAiRequest(
       const preferredModel = env.ANTHROPIC_MODEL?.trim();
       const candidateModels: string[] = [
         ...(preferredModel ? [preferredModel] : []),
+        'claude-haiku-5-5',
+        'claude-sonnet-5-5',
+        'claude-sonnet-4-5-20250929',
+        'claude-haiku-4-5-20251001',
         'claude-3-5-sonnet-latest',
         'claude-3-5-sonnet-20241022',
         'claude-3-5-haiku-latest',
         'claude-3-haiku-20240307',
-        'claude-sonnet-4-5',
-        'claude-haiku-4-5',
       ];
 
       // Also dynamically discover available models from /v1/models if needed
