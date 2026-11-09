@@ -1,0 +1,79 @@
+[
+  {
+    "playbook_id": "PB-1",
+    "name": "Performance deep-dive",
+    "what_happens": "Joint call with merchant and Payments Ops to review success-rate drop by method/bank; share fix plan within 3 days.",
+    "when_it_applies": "Success rate fell sharply or merchant complains of failures",
+    "tier": 1,
+    "short_label": "Performance deep-dive",
+    "steps": [
+      "Joint technical call with merchant & Payments Ops within 24h",
+      "Audit gateway failure logs by payment method, issuer bank & UPI handle",
+      "Deploy 3-day dynamic downtime routing fix plan before any commercial discussion"
+    ]
+  },
+  {
+    "playbook_id": "PB-2",
+    "name": "Support recovery",
+    "what_happens": "CSM takes ownership of all open tickets, gives a single point of contact and a closure date; senior callback within 48 hours.",
+    "when_it_applies": "Multiple unresolved tickets, low CSAT",
+    "tier": 1,
+    "short_label": "Support recovery",
+    "steps": [
+      "Assign single CSM point-of-contact ownership across all open tickets",
+      "Escalate unresolved settlement/webhook tickets to specialist engineering queue",
+      "Deliver senior callback within 48h with guaranteed closure timestamps"
+    ]
+  },
+  {
+    "playbook_id": "PB-3",
+    "name": "Commercial review",
+    "what_happens": "Account Manager reviews rate card, volume tiers and renewal terms before the renewal date.",
+    "when_it_applies": "Competitor mention, renewal within ~60 days",
+    "tier": 2,
+    "short_label": "Commercial review",
+    "steps": [
+      "Verify Tier-1 gateway performance and support queues are 100% clear",
+      "Benchmark current MDR against merchant’s recent monthly TPV run-rate",
+      "Present custom volume-tier rate card & fee-freeze proposal ahead of renewal cliff"
+    ]
+  },
+  {
+    "playbook_id": "PB-4",
+    "name": "Re-engagement and adoption",
+    "what_happens": "Executive-sponsor outreach plus a short workshop on unused products and reports; re-confirm the right contact person.",
+    "when_it_applies": "Low logins, few products used, no response to outreach",
+    "tier": 2,
+    "short_label": "Re-engagement & adoption",
+    "steps": [
+      "Re-confirm operational POC & align with incoming executive sponsor",
+      "Audit reconciliation health and webhook/dashboard usage",
+      "Run 20-minute workshop on automated settlement & multi-product workflows"
+    ]
+  },
+  {
+    "playbook_id": "PB-5",
+    "name": "Growth / expansion check-in",
+    "what_happens": "Positive check-in; offer new products or higher-limit plans.",
+    "when_it_applies": "Healthy and growing",
+    "tier": 2,
+    "short_label": "Growth check-in",
+    "steps": [
+      "Congratulate merchant on strong 6-month TPV expansion trajectory",
+      "Review higher-tier transaction limits and API scaling tickets",
+      "Pitch Subscriptions, Route, or automated payout workflows"
+    ]
+  },
+  {
+    "playbook_id": "PB-6",
+    "name": "Monitor only",
+    "what_happens": "No outreach; keep on watchlist and re-check next month.",
+    "when_it_applies": "Seasonal dip, low-volume stable, or no real risk signal",
+    "tier": 0,
+    "short_label": "Monitor only",
+    "steps": [
+      "Keep on automated telemetry watchlist; consume zero human CSM hours",
+      "Re-evaluate trajectory on next monthly planning cycle"
+    ]
+  }
+]

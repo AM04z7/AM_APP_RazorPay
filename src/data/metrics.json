@@ -1,0 +1,216 @@
+{
+  "cycle_label": "November 2026 cycle",
+  "total_merchants": 100,
+  "csm_capacity": 15,
+  "cost_per_call_inr": 1500,
+  "hours_per_call": 1.5,
+  "total_csm_cost_inr": 22500,
+  "total_csm_hours": 22.5,
+  "total_at_risk_revenue_inr": 8972400,
+  "top15_defended_revenue_inr": 8407200,
+  "overflow_revenue_inr": 565200,
+  "coverage_pct": 93.7,
+  "roi_multiple": 373.7,
+  "roi_multiple_rounded": 374,
+  "cliffs_caught_top15": 5,
+  "false_alarm_spend_inr": 0,
+  "counts": {
+    "true_churn": 24,
+    "top15": 15,
+    "overflow": 9,
+    "decoys_total": 33,
+    "seasonal": 8,
+    "fast_growers": 13,
+    "low_volume_flatline": 12,
+    "core_stable": 43
+  },
+  "boundary_15_id": "C2036",
+  "boundary_16_id": "C2091",
+  "workbook_audit_rows": [
+    {
+      "Metric_Parameter": "SECTION 1: COHORT PARTITION & DECOY FILTER COUNTS",
+      "Calculated_Value": "",
+      "Audit_Notes_and_Verification": ""
+    },
+    {
+      "Metric_Parameter": "Total Merchants Evaluated",
+      "Calculated_Value": 100,
+      "Audit_Notes_and_Verification": "All 100 accounts in P2_Merchants"
+    },
+    {
+      "Metric_Parameter": "True Churn Candidates (Ranks 1-24)",
+      "Calculated_Value": 24,
+      "Audit_Notes_and_Verification": "Passed to Phase 2 Causal Hazard Engine"
+    },
+    {
+      "Metric_Parameter": "Decoy Filter 1: Seasonal V-Rebound (Ranks 25-32)",
+      "Calculated_Value": 8,
+      "Audit_Notes_and_Verification": "PB-6 Monitor: C2012, C2023, C2048, C2054, C2065, C2066, C2067, C2094"
+    },
+    {
+      "Metric_Parameter": "Decoy Filter 2: Fast Growers (Ranks 88-100)",
+      "Calculated_Value": 13,
+      "Audit_Notes_and_Verification": "PB-5 Expansion: Includes 6 high-ticket busy-but-healthy growers"
+    },
+    {
+      "Metric_Parameter": "Decoy Filter 3: Low-Volume Flatline (Ranks 76-87)",
+      "Calculated_Value": 12,
+      "Audit_Notes_and_Verification": "PB-6 Monitor: Stable micro-merchants <= Rs 3L/mo"
+    },
+    {
+      "Metric_Parameter": "Core Stable Accounts (Ranks 33-75)",
+      "Calculated_Value": 43,
+      "Audit_Notes_and_Verification": "PB-6 Monitor: Normal steady-state variation"
+    },
+    {
+      "Metric_Parameter": "False Alarms Flagged in Top 15",
+      "Calculated_Value": 0,
+      "Audit_Notes_and_Verification": "100.0% Precision on Decoy Suppression"
+    },
+    {
+      "Metric_Parameter": "",
+      "Calculated_Value": "",
+      "Audit_Notes_and_Verification": ""
+    },
+    {
+      "Metric_Parameter": "SECTION 2: CAUSAL DRIVER DISTRIBUTION (24 TRUE CHURNERS)",
+      "Calculated_Value": "",
+      "Audit_Notes_and_Verification": ""
+    },
+    {
+      "Metric_Parameter": "Performance Degradation (PB-1)",
+      "Calculated_Value": 7,
+      "Audit_Notes_and_Verification": "Gateway SR drop >= 3.0 pp"
+    },
+    {
+      "Metric_Parameter": "Support & Service Breakdown (PB-2)",
+      "Calculated_Value": 6,
+      "Audit_Notes_and_Verification": "Unresolved tickets >= 4 or (>=2 with CSAT <= 2)"
+    },
+    {
+      "Metric_Parameter": "Commercial & Competitor Threat (PB-3)",
+      "Calculated_Value": 6,
+      "Audit_Notes_and_Verification": "Renewal <= 60d with active competitor/rate-card pressure"
+    },
+    {
+      "Metric_Parameter": "Silent Disengagement (PB-4)",
+      "Calculated_Value": 5,
+      "Audit_Notes_and_Verification": "Logins <= 4 & single product used (Tenure split at 24m)"
+    },
+    {
+      "Metric_Parameter": "",
+      "Calculated_Value": "",
+      "Audit_Notes_and_Verification": ""
+    },
+    {
+      "Metric_Parameter": "SECTION 3: FINANCIAL RECONCILIATION & CAPACITY ROI",
+      "Calculated_Value": "",
+      "Audit_Notes_and_Verification": ""
+    },
+    {
+      "Metric_Parameter": "Total Annual Net Revenue at Risk (All 24 Churners)",
+      "Calculated_Value": "Rs 8,972,400 (Rs 89.72L)",
+      "Audit_Notes_and_Verification": "Sum of m6_TPV * 1% * 12 across Ranks 1-24"
+    },
+    {
+      "Metric_Parameter": "Top 15 Captured Annual Net Revenue (White-Glove CSM)",
+      "Calculated_Value": "Rs 8,407,200 (Rs 84.07L)",
+      "Audit_Notes_and_Verification": "93.7% of total churn revenue protected"
+    },
+    {
+      "Metric_Parameter": "Overflow Ranks 16-24 Annual Net Revenue (Automated Ops)",
+      "Calculated_Value": "Rs 565,200 (Rs 5.65L)",
+      "Audit_Notes_and_Verification": "6.3% routed to zero-hour automated containment"
+    },
+    {
+      "Metric_Parameter": "Total Expected Value at Risk (All 24 Churners)",
+      "Calculated_Value": "Rs 6,515,292 (Rs 65.15L)",
+      "Audit_Notes_and_Verification": "Probability-weighted expected loss"
+    },
+    {
+      "Metric_Parameter": "Top 15 Expected Value at Risk Captured",
+      "Calculated_Value": "Rs 6,069,833 (Rs 60.70L)",
+      "Audit_Notes_and_Verification": "93.2% of probability-weighted risk"
+    },
+    {
+      "Metric_Parameter": "Overflow Ranks 16-24 Expected Value at Risk",
+      "Calculated_Value": "Rs 445,459 (Rs 4.45L)",
+      "Audit_Notes_and_Verification": "Covered via automated Ops workflows"
+    },
+    {
+      "Metric_Parameter": "Monthly CSM Outreach Capacity Constraint",
+      "Calculated_Value": 15,
+      "Audit_Notes_and_Verification": "Hard cap from P2_Assumptions"
+    },
+    {
+      "Metric_Parameter": "Total CSM Human Hours Consumed",
+      "Calculated_Value": "22.5 hours",
+      "Audit_Notes_and_Verification": "15 outreaches * 1.5 hours per outreach"
+    },
+    {
+      "Metric_Parameter": "Total CSM Outreach Execution Cost",
+      "Calculated_Value": "Rs 22,500",
+      "Audit_Notes_and_Verification": "15 outreaches * Rs 1,500 per outreach"
+    },
+    {
+      "Metric_Parameter": "Return on CSM Intervention Investment (Gross Revenue / Cost)",
+      "Calculated_Value": "373.7x",
+      "Audit_Notes_and_Verification": "Rs 84.07L protected for Rs 22,500 CSM cost"
+    },
+    {
+      "Metric_Parameter": "",
+      "Calculated_Value": "",
+      "Audit_Notes_and_Verification": ""
+    },
+    {
+      "Metric_Parameter": "SECTION 4: BOUNDARY & CLIFF VERIFICATION CHECKS",
+      "Calculated_Value": "",
+      "Audit_Notes_and_Verification": ""
+    },
+    {
+      "Metric_Parameter": "Rank #15 Cutoff Merchant (Included in Top 15)",
+      "Calculated_Value": "C2036 (Orchid Pharma)",
+      "Audit_Notes_and_Verification": "Score: Rs 120,265.52 | Renewal: 28d | Cliff: 1.3778x"
+    },
+    {
+      "Metric_Parameter": "Rank #16 Cutoff Merchant (First Automated Overflow)",
+      "Calculated_Value": "C2091 (Monsoon Pharma)",
+      "Audit_Notes_and_Verification": "Score: Rs 104,994.00 | Renewal: 147d | Cliff: 1.0000x"
+    },
+    {
+      "Metric_Parameter": "NaN / Null Cell Count Across All Exported Tabs",
+      "Calculated_Value": 0,
+      "Audit_Notes_and_Verification": "Strict zero-NaN audit passed"
+    }
+  ],
+  "assumptions": [
+    {
+      "item": "Net revenue",
+      "assumption": "Razorpay earns about 1% of TPV as net revenue (assumption for this exercise)."
+    },
+    {
+      "item": "Time horizon",
+      "assumption": "'Churn' means the merchant moves most of its volume away within the next 90 days."
+    },
+    {
+      "item": "Cost of a false alarm",
+      "assumption": "1.5 hours of CSM time per outreach, valued at Rs 1,500."
+    },
+    {
+      "item": "Value of a saved merchant",
+      "assumption": "Net revenue for 12 months at the merchant's most recent monthly TPV (m6)."
+    },
+    {
+      "item": "TPV unit",
+      "assumption": "All TPV figures are in Rs lakh per month (1 lakh = 100,000)."
+    },
+    {
+      "item": "Seasonality",
+      "assumption": "Gifting, Education and Travel merchants have seasonal dips that are not churn."
+    },
+    {
+      "item": "Capacity",
+      "assumption": "The CSM team can run at most 15 proactive outreaches this month."
+    }
+  ]
+}

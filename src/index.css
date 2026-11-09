@@ -1,0 +1,109 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  /* Core / Brand */
+  --ink-900: #0B1B3A;
+  --ink-600: #43506B;
+  --ink-400: #8A94A8;
+  --canvas: #F6F7F9;
+  --surface: #FFFFFF;
+  --hairline: #E3E7EE;
+  --rzp-blue: #3395FF;
+  --rzp-blue-deep: #1E6FE0;
+  --rzp-blue-wash: #EAF3FF;
+
+  /* Root-cause drivers */
+  --driver-perf: #F2994A;
+  --driver-service: #E5484D;
+  --driver-commercial: #8E4EC6;
+  --driver-disengaged: #12A594;
+
+  /* Semantic */
+  --cliff: #D9480F;
+  --ok: #2F9E44;
+  --lock: #8A94A8;
+}
+
+@layer base {
+  html {
+    font-family: 'Inter Variable', 'Inter', system-ui, -apple-system, sans-serif;
+    font-feature-settings: "ss01", "cv11";
+    background-color: var(--canvas);
+    color: var(--ink-900);
+  }
+
+  .font-mono,
+  code,
+  pre,
+  .tabular-nums {
+    font-family: 'JetBrains Mono', monospace;
+    font-variant-numeric: tabular-nums;
+  }
+}
+
+/* Suppressed Decoys 45° diagonal hatch */
+.track-decoy-hatch {
+  background-color: #E2E6EE;
+  background-image: repeating-linear-gradient(
+    -45deg,
+    #C9CFDA,
+    #C9CFDA 2.5px,
+    #EAEEF5 2.5px,
+    #EAEEF5 6px
+  );
+}
+
+/* Overflow Automated Ops treatment */
+.track-overflow-fill {
+  background-color: rgba(51, 149, 255, 0.32);
+  border: 1.5px dashed #3395FF;
+}
+
+/* Capture curve right-of-capacity hatch */
+.capture-overflow-hatch {
+  background-image: repeating-linear-gradient(
+    -45deg,
+    rgba(51, 149, 255, 0.16),
+    rgba(51, 149, 255, 0.16) 3px,
+    rgba(255, 255, 255, 0.6) 3px,
+    rgba(255, 255, 255, 0.6) 7px
+  );
+}
+
+/* Overline label typography */
+.overline-label {
+  font-size: 11px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--ink-400);
+}
+
+/* Custom subtle scrollbars */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+::-webkit-scrollbar-thumb {
+  background: #CBD2E0;
+  border-radius: 999px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: #8A94A8;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
