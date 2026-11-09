@@ -184,7 +184,12 @@ Return ONLY valid JSON matching this exact structure:
 - Tier-1 Open Issue Active: ${m.tier1Open ? 'YES (Must stabilize Tier 1 before pitching commercial terms)' : 'NO (Tier 1 verified clear)'}
 ${payload.customPrompt ? `\nAdditional CSM Question/Context: ${payload.customPrompt}` : ''}
 
-Generate 3 recommended_solutions and 3 customer_objections with verbatim suggested_response in ${lang}. Return ONLY valid JSON.`;
+Generate 3 recommended_solutions and 3 customer_objections with verbatim suggested_response in ${lang}.
+FORMATTING RULES:
+- Keep each "detail" to 1-2 crisp sentences (max 35 words).
+- Keep each "objection" to 1 realistic sentence, and each "suggested_response" to 2-3 punchy sentences (max 55 words).
+- NEVER use unescaped double quotes (") inside JSON string values; use single quotes (') if quoting inside a string.
+- Return ONLY valid JSON.`;
 
     return { system, user };
   }
@@ -198,16 +203,76 @@ Return valid JSON: { "answer": "markdown string", "highlighted_merchants": ["C20
   return { system, user };
 }
 
+function repairTruncatedJson(input: string): string {
+  let s = input.trim();
+  const firstBrace = s.indexOf('{');
+  if (firstBrace !== -1) {
+    s = s.slice(firstBrace);
+  }
+  // Remove trailing incomplete key/value or comma after the last complete string/object
+  let inString = false;
+  let escape = false;
+  const stack: string[] = [];
+  for (let i = 0; i < s.length; i++) {
+    const ch = s[i];
+    if (escape) {
+      escape = false;
+      continue;
+    }
+    if (ch === '\\') {
+      escape = true;
+      continue;
+    }
+    if (ch === '"') {
+      inString = !inString;
+      continue;
+    }
+    if (!inString) {
+      if (ch === '{') stack.push('}');
+      else if (ch === '[') stack.push(']');
+      else if (ch === '}' || ch === ']') {
+        if (stack.length > 0 && stack[stack.length - 1] === ch) {
+          stack.pop();
+        }
+      }
+    }
+  }
+  if (inString) {
+    s += '"';
+  }
+  // Strip any trailing comma or colon before closing
+  s = s.replace(/[,:\s]+$/, '');
+  while (stack.length > 0) {
+    s += stack.pop();
+  }
+  return s;
+}
+
 function extractJsonObject(raw: string): any {
   const trimmed = raw.trim();
   const fenceMatch = trimmed.match(/```(?:json)?\s*([\s\S]*?)```/i);
   const candidate = fenceMatch ? fenceMatch[1].trim() : trimmed;
   const firstBrace = candidate.indexOf('{');
   const lastBrace = candidate.lastIndexOf('}');
+
   if (firstBrace !== -1 && lastBrace !== -1 && lastBrace > firstBrace) {
-    return JSON.parse(candidate.slice(firstBrace, lastBrace + 1));
+    const sliced = candidate.slice(firstBrace, lastBrace + 1);
+    try {
+      return JSON.parse(sliced);
+    } catch {
+      // Fall through to repair
+    }
   }
-  return JSON.parse(candidate);
+
+  try {
+    return JSON.parse(repairTruncatedJson(candidate));
+  } catch {
+    if (firstBrace !== -1 && lastBrace !== -1 && lastBrace > firstBrace) {
+      const sliced = candidate.slice(firstBrace, lastBrace + 1);
+      return JSON.parse(repairTruncatedJson(sliced));
+    }
+    return JSON.parse(candidate);
+  }
 }
 
 export async function handleAiRequest(
@@ -265,11 +330,11 @@ export async function handleAiRequest(
     if (anthropicKey) {
       const preferredModel = env.ANTHROPIC_MODEL?.trim();
       const candidateModels: string[] = [
-        ...(preferredModel ? [preferredModel] : []),
         'claude-haiku-5-5',
-        'claude-sonnet-5-5',
-        'claude-sonnet-4-5-20250929',
+        ...(preferredModel ? [preferredModel] : []),
         'claude-haiku-4-5-20251001',
+        'claude-sonnet-4-5-20250929',
+        'claude-sonnet-5-5',
         'claude-3-5-sonnet-latest',
         'claude-3-5-sonnet-20241022',
         'claude-3-5-haiku-latest',
@@ -287,7 +352,7 @@ export async function handleAiRequest(
           },
           body: JSON.stringify({
             model: modelId,
-            max_tokens: 1500,
+            max_tokens: 3500,
             thinking: { type: 'disabled' },
             system,
             messages: [{ role: 'user', content: user }],
