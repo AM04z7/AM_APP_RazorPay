@@ -52,6 +52,9 @@ export const TriageSequence: React.FC<TriageSequenceProps> = ({ merchant }) => {
   );
   const [isLoadingAI, setIsLoadingAI] = useState(false);
   const [aiError, setAiError] = useState<string | null>(null);
+  const [inlineKey, setInlineKey] = useState<string>(
+    () => (typeof window !== 'undefined' ? localStorage.getItem('retainops_anthropic_key') || '' : '')
+  );
   const [copiedIdx, setCopiedIdx] = useState<number | null>(null);
 
   // Keep synced when switching merchant or language
@@ -81,13 +84,18 @@ export const TriageSequence: React.FC<TriageSequenceProps> = ({ merchant }) => {
 
     setIsLoadingAI(true);
     setAiError(null);
+    const storedKey = (typeof window !== 'undefined' ? localStorage.getItem('retainops_anthropic_key') : '') || inlineKey || '';
     try {
       const res = await fetch('/api/ai', {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+        headers: {
+          'Content-Type': 'application/json',
+          ...(storedKey ? { 'x-anthropic-key': storedKey } : {}),
+        },
         body: JSON.stringify({
           action: 'suggest_solutions',
           language: targetLang,
+          apiKey: storedKey || undefined,
           merchant: {
             ...merchant,
             tier1Open: isTier2Locked,
@@ -501,9 +509,33 @@ export const TriageSequence: React.FC<TriageSequenceProps> = ({ merchant }) => {
         </div>
 
         {aiError && (
-          <div className="mt-2.5 p-2.5 rounded bg-[#FFF4F0] border border-cliff/30 text-xs text-cliff flex items-start gap-2">
-            <AlertCircle className="w-4 h-4 shrink-0 mt-0.5" />
-            <div>{aiError}</div>
+          <div className="mt-2.5 p-3 rounded bg-[#FFF4F0] border border-cliff/30 text-xs text-cliff space-y-2">
+            <div className="flex items-start gap-2">
+              <AlertCircle className="w-4 h-4 shrink-0 mt-0.5" />
+              <div className="flex-1 leading-relaxed">{aiError}</div>
+            </div>
+            <div className="pt-2 border-t border-cliff/20 flex flex-col sm:flex-row gap-2">
+              <input
+                type="password"
+                placeholder="Paste ANTHROPIC_API_KEY (sk-ant-...) here"
+                value={inlineKey}
+                onChange={(e) => setInlineKey(e.target.value)}
+                className="flex-1 px-2.5 py-1.5 text-xs rounded border border-gray-300 bg-white text-ink-900 focus:outline-none focus:ring-1 focus:ring-rzp-blue"
+              />
+              <button
+                type="button"
+                onClick={() => {
+                  if (inlineKey.trim()) {
+                    localStorage.setItem('retainops_anthropic_key', inlineKey.trim());
+                    setAiError(null);
+                    handleGenerateSolutions(true);
+                  }
+                }}
+                className="px-3 py-1.5 bg-rzp-blue text-white font-medium rounded hover:bg-rzp-blue-dark text-xs whitespace-nowrap"
+              >
+                Save & Run
+              </button>
+            </div>
           </div>
         )}
 

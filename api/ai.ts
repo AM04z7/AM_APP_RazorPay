@@ -9,6 +9,8 @@ export interface AIRequestPayload {
   preset?: string;
   language?: SupportedLanguage;
   customPrompt?: string;
+  apiKey?: string;
+  geminiKey?: string;
   merchant?: {
     merchant_id: string;
     business_name: string;
@@ -225,16 +227,33 @@ export async function handleAiRequest(
     }
   }
 
-  const anthropicKey = env.ANTHROPIC_API_KEY?.trim();
-  const geminiKey = env.GEMINI_API_KEY?.trim();
-  const openaiKey = env.OPENAI_API_KEY?.trim();
+  const anthropicKey = (
+    reqHeaders?.['x-anthropic-key'] ||
+    reqHeaders?.['anthropic-api-key'] ||
+    reqBody?.apiKey ||
+    env?.ANTHROPIC_API_KEY ||
+    (typeof process !== 'undefined' ? process.env?.ANTHROPIC_API_KEY : undefined)
+  )?.trim();
+
+  const geminiKey = (
+    reqHeaders?.['x-gemini-key'] ||
+    reqBody?.geminiKey ||
+    env?.GEMINI_API_KEY ||
+    (typeof process !== 'undefined' ? process.env?.GEMINI_API_KEY : undefined)
+  )?.trim();
+
+  const openaiKey = (
+    reqHeaders?.['x-openai-key'] ||
+    env?.OPENAI_API_KEY ||
+    (typeof process !== 'undefined' ? process.env?.OPENAI_API_KEY : undefined)
+  )?.trim();
 
   if (!anthropicKey && !geminiKey && !openaiKey) {
     return {
       status: 503,
       body: {
         error:
-          'No Cloud LLM API key found. Add ANTHROPIC_API_KEY to C:\\Ideas\\RazorPay\\App_AM\\.env.local (or Vercel Environment Variables) and retry.',
+          'No Cloud LLM API key found. Please add ANTHROPIC_API_KEY to Vercel Project Settings > Environment Variables (and Redeploy), or enter your key in the box below.',
         missingKey: true,
       },
     };
@@ -247,10 +266,12 @@ export async function handleAiRequest(
       const preferredModel = env.ANTHROPIC_MODEL?.trim();
       const candidateModels: string[] = [
         ...(preferredModel ? [preferredModel] : []),
+        'claude-3-5-sonnet-latest',
+        'claude-3-5-sonnet-20241022',
+        'claude-3-5-haiku-latest',
+        'claude-3-haiku-20240307',
         'claude-sonnet-4-5',
         'claude-haiku-4-5',
-        'claude-sonnet-4-0',
-        'claude-3-haiku-20240307',
       ];
 
       // Also dynamically discover available models from /v1/models if needed
@@ -434,10 +455,18 @@ export default async function handler(req: Request): Promise<Response> {
       });
     }
     const payload = JSON.parse(bodyText) as AIRequestPayload;
-    const envObj: Record<string, string | undefined> =
-      typeof process !== 'undefined' && process.env ? (process.env as any) : {};
+    const envObj: Record<string, string | undefined> = {
+      ...(typeof process !== 'undefined' && process.env ? (process.env as any) : {}),
+      ANTHROPIC_API_KEY: typeof process !== 'undefined' ? process.env?.ANTHROPIC_API_KEY : undefined,
+      GEMINI_API_KEY: typeof process !== 'undefined' ? process.env?.GEMINI_API_KEY : undefined,
+      OPENAI_API_KEY: typeof process !== 'undefined' ? process.env?.OPENAI_API_KEY : undefined,
+      ANTHROPIC_MODEL: typeof process !== 'undefined' ? process.env?.ANTHROPIC_MODEL : undefined,
+      DEMO_SECRET_KEY: typeof process !== 'undefined' ? process.env?.DEMO_SECRET_KEY : undefined,
+    };
     const result = await handleAiRequest(payload, envObj, {
       'x-demo-key': req.headers.get('x-demo-key') || undefined,
+      'x-anthropic-key': req.headers.get('x-anthropic-key') || req.headers.get('anthropic-api-key') || undefined,
+      'x-gemini-key': req.headers.get('x-gemini-key') || undefined,
     });
 
     return new Response(JSON.stringify(result.body), {

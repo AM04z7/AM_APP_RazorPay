@@ -64,6 +64,9 @@ export const OutreachComposer: React.FC<OutreachComposerProps> = ({ merchant }) 
   const [customInstruction, setCustomInstruction] = useState('');
   const [isRewriting, setIsRewriting] = useState(false);
   const [aiError, setAiError] = useState<string | null>(null);
+  const [inlineKey, setInlineKey] = useState<string>(
+    () => (typeof window !== 'undefined' ? localStorage.getItem('retainops_anthropic_key') || '' : '')
+  );
 
   const parsedSegments = useMemo(
     () => parseMessageTokens(draft.body, merchant),
@@ -123,14 +126,19 @@ export const OutreachComposer: React.FC<OutreachComposerProps> = ({ merchant }) 
     }
 
     setIsRewriting(true);
+    const storedKey = (typeof window !== 'undefined' ? localStorage.getItem('retainops_anthropic_key') : '') || inlineKey || '';
     try {
       const res = await fetch('/api/ai', {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+        headers: {
+          'Content-Type': 'application/json',
+          ...(storedKey ? { 'x-anthropic-key': storedKey } : {}),
+        },
         body: JSON.stringify({
           action: 'rewrite_outreach',
           preset: presetId,
           language: lang,
+          apiKey: storedKey || undefined,
           customPrompt: customInstruction.trim() || undefined,
           merchant: {
             ...merchant,
@@ -341,9 +349,35 @@ export const OutreachComposer: React.FC<OutreachComposerProps> = ({ merchant }) 
         </div>
 
         {aiError && (
-          <div className="text-[11px] text-cliff flex items-center gap-1.5 pt-0.5">
-            <AlertCircle className="w-3.5 h-3.5 shrink-0" />
-            <span>{aiError}</span>
+          <div className="p-2.5 rounded bg-[#FFF4F0] border border-cliff/30 text-xs text-cliff space-y-2">
+            <div className="flex items-start gap-1.5">
+              <AlertCircle className="w-3.5 h-3.5 shrink-0 mt-0.5" />
+              <div className="flex-1 text-[11px] leading-relaxed">{aiError}</div>
+            </div>
+            <div className="flex flex-col sm:flex-row gap-2 pt-1 border-t border-cliff/20">
+              <input
+                type="password"
+                placeholder="Paste ANTHROPIC_API_KEY (sk-ant-...) here"
+                value={inlineKey}
+                onChange={(e) => setInlineKey(e.target.value)}
+                className="flex-1 px-2 py-1 text-xs rounded border border-gray-300 bg-white text-ink-900 focus:outline-none focus:ring-1 focus:ring-rzp-blue"
+              />
+              <button
+                type="button"
+                onClick={() => {
+                  if (inlineKey.trim()) {
+                    localStorage.setItem('retainops_anthropic_key', inlineKey.trim());
+                    setAiError(null);
+                    if (activePreset) {
+                      handleRewrite(activePreset, false);
+                    }
+                  }
+                }}
+                className="px-2.5 py-1 bg-rzp-blue text-white font-medium rounded hover:bg-rzp-blue-dark text-xs whitespace-nowrap"
+              >
+                Save & Run
+              </button>
+            </div>
           </div>
         )}
 
